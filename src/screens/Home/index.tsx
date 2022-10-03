@@ -13,6 +13,7 @@ import {
   TotalPassCount,
   LoginList,
 } from './styles';
+import RNGestureHandlerButton from 'react-native-gesture-handler/lib/typescript/components/GestureHandlerButton';
 
 interface LoginDataProps {
   id: string;
@@ -31,14 +32,31 @@ export function Home() {
   async function loadData() {
     const dataKey = '@savepass:logins';
     // Get asyncStorage data, use setSearchListData and setData
+    const response = await AsyncStorage.getItem(dataKey)
+    const responseFormatted = response ? JSON.parse(response) : []
+
+    setData(responseFormatted)
+    setSearchListData(responseFormatted)
   }
 
   function handleFilterLoginData() {
-    // Filter results inside data, save with setSearchListData
+    if (searchText === '') {
+      return
+    }
+
+    const filteredData = data.filter(
+      (pass) => pass.service_name === searchText
+    )
+
+    setSearchListData(filteredData)
   }
 
   function handleChangeInputText(text: string) {
-    // Update searchText value
+    if (text === '') {
+      setSearchListData(data)
+    }
+
+    setSearchText(text)
   }
 
   useFocusEffect(useCallback(() => {
